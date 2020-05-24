@@ -22,7 +22,7 @@ class ReportController extends Controller
     }
 
     public function index() {
-        date_default_timezone_set('asia/ho_chi_minh');
+        date_default_timezone_set('africa/nairobi');
         $format = 'Y/m/d';
         $now = date($format);
         $to = date($format, strtotime("+30 days"));
@@ -98,7 +98,8 @@ class ReportController extends Controller
         ->leftJoin('country', 'employees.country_id', '=', 'country.id')
         ->leftJoin('division', 'employees.division_id', '=', 'division.id')
         ->select('employees.firstname', 'employees.middlename', 'employees.lastname', 
-        'employees.age','employees.birthdate', 'employees.address', 'employees.zip', 'employees.date_hired',
+        'employees.age','employees.birthdate', 'employees.address', 'employees.zip',
+        'employees.nhif', 'employees.nssf','employees.salary','employees.date_hired',
         'department.name as department_name', 'division.name as division_name')
         ->where('date_hired', '>=', $constraints['from'])
         ->where('date_hired', '<=', $constraints['to'])

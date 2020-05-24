@@ -69,8 +69,9 @@ class EmployeeManagementController extends Controller
     {
         $this->validateInput($request);
         // Upload image
+    
         $path = $request->file('picture')->store('avatars');
-        $keys = ['lastname', 'firstname', 'middlename', 'address', 'city_id', 'state_id', 'country_id', 'zip',
+        $keys = ['lastname', 'firstname', 'middlename', 'address', 'city_id','salary', 'state_id', 'country_id', 'zip',
         'age', 'birthdate', 'date_hired', 'department_id', 'department_id', 'division_id','nssf','nhif'];
         $input = $this->createQueryInput($keys, $request);
         $input['picture'] = $path;
@@ -102,7 +103,7 @@ class EmployeeManagementController extends Controller
     {
         $employee = Employee::find($id);
         // Redirect to state list if updating state wasn't existed
-        if ($employee == null || count($employee) == 0) {
+        if ($employee == null) {
             return redirect()->intended('/employee-management');
         }
         $cities = City::all();
@@ -126,7 +127,7 @@ class EmployeeManagementController extends Controller
         $employee = Employee::findOrFail($id);
         $this->validateInput($request);
         // Upload image
-        $keys = ['lastname', 'firstname', 'middlename', 'address','city_id', 'state_id', 'country_id', 'zip',
+        $keys = ['lastname', 'firstname', 'middlename', 'address','city_id','salary','nhif','nssf', 'state_id', 'country_id', 'zip',
         'age', 'birthdate', 'date_hired', 'department_id', 'department_id', 'division_id'];
         $input = $this->createQueryInput($keys, $request);
         if ($request->file('picture')) {
@@ -213,7 +214,8 @@ class EmployeeManagementController extends Controller
             'birthdate' => 'required',
             'date_hired' => 'required',
             'department_id' => 'required',
-            'division_id' => 'required'
+            'division_id' => 'required',
+            'salary' => 'required'
         ]);
     }
 

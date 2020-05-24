@@ -107,6 +107,12 @@
                               <input id="nhif" type="text" class="form-control" name="nhif" value="{{ old('nhif') }}" required>
                             </div>
                         </div>
+                          <div class="form-group">
+                            <label class="col-md-4 control-label">SALARY.</label>
+                            <div class="col-md-6">
+                              <input id="salary" type="number" class="form-control" name="salary" value="{{ old('salary') }}" required>
+                            </div>
+                        </div>
                         <div class="form-group{{ $errors->has('zip') ? ' has-error' : '' }}">
                             <label for="zip" class="col-md-4 control-label">Zip</label>
 
@@ -188,7 +194,7 @@
                         <div class="form-group">
                             <label for="avatar" class="col-md-4 control-label" >Picture</label>
                             <div class="col-md-6">
-                                <input type="file" id="picture" name="picture" required >
+                                <input type="file" id="picture" name="picture" >
                             </div>
                         </div>
                         <div class="form-group">

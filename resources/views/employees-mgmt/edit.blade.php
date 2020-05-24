@@ -72,7 +72,25 @@
                                 </select>
                             </div>
                         </div>
-                              <div class="form-group">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">NSSF NO.</label>
+                            <div class="col-md-6">
+                                <input id="nssf" type="text" class="form-control" name="nssf" value="{{ $employee->nssf}}" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">NHIF NO.</label>
+                            <div class="col-md-6">
+                              <input id="nhif" type="text" class="form-control" name="nhif" value="{{ $employee->nhif }}" required>
+                            </div>
+                        </div>
+                          <div class="form-group">
+                            <label class="col-md-4 control-label">SALARY.</label>
+                            <div class="col-md-6">
+                              <input id="salary" type="number" class="form-control" name="salary" value="{{ $employee->salary }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="col-md-4 control-label">State</label>
                             <div class="col-md-6">
                                 <select class="form-control" name="state_id">
