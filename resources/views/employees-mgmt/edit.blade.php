@@ -62,8 +62,8 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-4 control-label">City</label>
+                        <div class="form-group" style="display:none">
+                            <label class="col-md-4 control-label" style="display:none">City</label>
                             <div class="col-md-6">
                                 <select class="form-control" name="city_id">
                                     @foreach ($cities as $city)
@@ -90,8 +90,8 @@
                               <input id="salary" type="number" class="form-control" name="salary" value="{{ $employee->salary }}" required>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-4 control-label">State</label>
+                        <div class="form-group" style="display:none">
+                            <label class="col-md-4 control-label" >State</label>
                             <div class="col-md-6">
                                 <select class="form-control" name="state_id">
                                     @foreach ($states as $state)

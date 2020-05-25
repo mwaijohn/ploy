@@ -32,14 +32,13 @@ class EmployeeManagementController extends Controller
     public function index()
     {
         $employees = DB::table('employees')
-        ->leftJoin('city', 'employees.city_id', '=', 'city.id')
+        // ->leftJoin('city', 'employees.city_id', '=', 'city.id')
         ->leftJoin('department', 'employees.department_id', '=', 'department.id')
-        ->leftJoin('state', 'employees.state_id', '=', 'state.id')
+        // ->leftJoin('state', 'employees.state_id', '=', 'state.id')
         ->leftJoin('country', 'employees.country_id', '=', 'country.id')
         ->leftJoin('division', 'employees.division_id', '=', 'division.id')
         ->select('employees.*', 'department.name as department_name', 'department.id as department_id', 'division.name as division_name', 'division.id as division_id')
         ->paginate(5);
-
         return view('employees-mgmt/index', ['employees' => $employees]);
     }
 
@@ -70,7 +69,13 @@ class EmployeeManagementController extends Controller
         $this->validateInput($request);
         // Upload image
     
-        $path = $request->file('picture')->store('avatars');
+        //$path = $request->file('picture')->store('avatars');
+
+        if($request->file('picture') == null){
+            $path = "no-image.png";
+        }else{
+            $path = $request->file('picture')->store('avatars');
+        }
         $keys = ['lastname', 'firstname', 'middlename', 'address', 'city_id','salary', 'state_id', 'country_id', 'zip',
         'age', 'birthdate', 'date_hired', 'department_id', 'department_id', 'division_id','nssf','nhif'];
         $input = $this->createQueryInput($keys, $request);

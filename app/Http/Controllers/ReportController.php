@@ -92,9 +92,9 @@ class ReportController extends Controller
 
     private function getExportingData($constraints) {
         return DB::table('employees')
-        ->leftJoin('city', 'employees.city_id', '=', 'city.id')
+        // ->leftJoin('city', 'employees.city_id', '=', 'city.id')
         ->leftJoin('department', 'employees.department_id', '=', 'department.id')
-        ->leftJoin('state', 'employees.state_id', '=', 'state.id')
+        // ->leftJoin('state', 'employees.state_id', '=', 'state.id')
         ->leftJoin('country', 'employees.country_id', '=', 'country.id')
         ->leftJoin('division', 'employees.division_id', '=', 'division.id')
         ->select('employees.firstname', 'employees.middlename', 'employees.lastname', 
