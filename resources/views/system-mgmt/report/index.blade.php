@@ -44,6 +44,58 @@
           @endcomponent
          @endcomponent
       </form>
+      <form method="POST" action="{{ route('report.search.department') }}">
+       {{ csrf_field() }}
+        <h3>Search by Department</h3>
+        <div class="row">
+           @component('layouts.two-cols-date-search-row', ['items' => ['From', 'To'], 
+          'oldVals' => [isset($searchingVals) ? $searchingVals['from'] : '', isset($searchingVals) ? $searchingVals['to'] : '']])
+          @endcomponent
+        </div>
+         <div class="row">
+          <div class="col">
+              <div class="form-group">
+                <label class="col-md-1 control-label">Department</label>
+                <div class="col-md-6">
+                    <select class="form-control js-states" name="department_id">
+                        <option value="-1">Please select department</option>
+                         @foreach ($departments as $department)
+                            <option value="{{$department->id}}">{{$department->name}}</option>
+                        @endforeach 
+                    </select>
+                </div>
+              </div>
+          </div>
+          <div class="col"><button class="btn btn-primary" type="submit">Search</button></div>
+         </div>
+        <br>
+      </form>
+       <form method="POST" action="{{ route('report.search.country') }}">
+        {{ csrf_field() }}
+        <h3>Search by Country</h3>
+          <div class="row">
+           @component('layouts.two-cols-date-search-row', ['items' => ['From', 'To'], 
+          'oldVals' => [isset($searchingVals) ? $searchingVals['from'] : '', isset($searchingVals) ? $searchingVals['to'] : '']])
+          @endcomponent
+        </div>
+         <div class="row">
+          <div class="col">
+              <div class="form-group">
+                <label class="col-md-1 control-label">Country</label>
+                <div class="col-md-6">
+                    <select class="form-control js-states" name="country_id" required>
+                        <option value="-1">Please select country</option>
+                         @foreach ($countries as $country)
+                            <option value="{{$country->id}}">{{$country->name}}</option>
+                        @endforeach 
+                    </select>
+                </div>
+              </div>
+          </div>
+          <div class="col"><button class="btn btn-primary" type="submit">Search</button></div>
+         </div>
+        <br>
+      </form>
     <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
       <div class="row">
         <div class="col-sm-12">

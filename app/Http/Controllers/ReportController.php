@@ -8,6 +8,8 @@ use Excel;
 use Illuminate\Support\Facades\DB;
 use Auth;
 use PDF;
+use App\Country;
+use App\Department;
 
 class ReportController extends Controller
 {
@@ -30,9 +32,12 @@ class ReportController extends Controller
             'from' => $now,
             'to' => $to
         ];
+        $countries = Country::all();
+        $departments = Department::all();
 
         $employees = $this->getHiredEmployees($constraints);
-        return view('system-mgmt/report/index', ['employees' => $employees, 'searchingVals' => $constraints]);
+        return view('system-mgmt/report/index', ['employees' => $employees, 'searchingVals' => $constraints,
+        'countries' => $countries, 'departments' => $departments]);
     }
 
     public function exportExcel(Request $request) {
@@ -61,7 +66,7 @@ class ReportController extends Controller
 
         // Chain the setters
         $excel->setCreator($author)
-            ->setCompany('HoaDang');
+            ->setCompany('Employees');
 
         // Call them separately
         $excel->setDescription('The list of hired employees');
@@ -74,14 +79,56 @@ class ReportController extends Controller
     }
 
     public function search(Request $request) {
+        //if country is specified include country
+
         $constraints = [
             'from' => $request['from'],
             'to' => $request['to']
         ];
-
+        $countries = Country::all();
+        $departments = Department::all();
         $employees = $this->getHiredEmployees($constraints);
-        return view('system-mgmt/report/index', ['employees' => $employees, 'searchingVals' => $constraints]);
+        return view('system-mgmt/report/index', ['employees' => $employees, 'searchingVals' => $constraints,
+        'countries' => $countries, 'departments' => $departments]);
     }
+
+    public function searchCountry(Request $request){
+        $constraints = [
+            'from' => $request['from'],
+            'to' => $request['to'],
+            "country_id" => $request['country_id']
+        ];
+
+        $countries = Country::all();
+        $departments = Department::all();
+
+        $employees = Employee::where('country_id', $constraints['country_id'])
+                                ->where('date_hired', '>=', $constraints['from'])
+                                ->where('date_hired', '<=', $constraints['to'])
+                                ->get();
+        return view('system-mgmt/report/index', ['employees' => $employees, 'searchingVals' => $constraints
+        ,'countries' => $countries, 'departments' => $departments]);
+    }
+
+        public function searchDepartment(Request $request){
+        $constraints = [
+            'from' => $request['from'],
+            'to' => $request['to'],
+            "department_id" => $request['department_id']
+        ];
+
+        $countries = Country::all();
+        $departments = Department::all();
+
+        $employees = Employee::where('department_id', $constraints['department_id'])
+                                ->where('date_hired', '>=', $constraints['from'])
+                                ->where('date_hired', '<=', $constraints['to'])
+                                ->get();
+        return view('system-mgmt/report/index', ['employees' => $employees, 'searchingVals' => $constraints
+        ,'countries' => $countries, 'departments' => $departments]);
+    }
+
+
 
     private function getHiredEmployees($constraints) {
         $employees = Employee::where('date_hired', '>=', $constraints['from'])
@@ -91,6 +138,20 @@ class ReportController extends Controller
     }
 
     private function getExportingData($constraints) {
+        $department_id = "";
+        try{
+            $department_id = $constraints['department_id'];
+        }catch(Exception $ex){
+            $department_id = "";
+        }
+
+        $country_id = "";
+        try{
+            $country_id = $constraints['country_id'];
+        }catch(Exception $ex){
+            $country_id = "";
+        }
+
         return DB::table('employees')
         // ->leftJoin('city', 'employees.city_id', '=', 'city.id')
         ->leftJoin('department', 'employees.department_id', '=', 'department.id')
@@ -103,6 +164,8 @@ class ReportController extends Controller
         'department.name as department_name', 'division.name as division_name')
         ->where('date_hired', '>=', $constraints['from'])
         ->where('date_hired', '<=', $constraints['to'])
+        ->where('department_id', $department_id)
+        ->where('country_id', $country_id)
         ->get()
         ->map(function ($item, $key) {
         return (array) $item;
