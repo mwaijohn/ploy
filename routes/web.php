@@ -47,6 +47,10 @@ Route::post('system-management/report/search', 'ReportController@search')->name(
 Route::post('system-management/report/search/country', 'ReportController@searchCountry')->name('report.search.country');
 Route::post('system-management/report/search/department', 'ReportController@searchDepartment')->name('report.search.department');
 Route::post('system-management/report/excel', 'ReportController@exportExcel')->name('report.excel');
+Route::post('system-management/report/excel/department', 'ReportController@exportExcelDepartment')->name('report.excel.department');
+Route::post('system-management/report/excel/country', 'ReportController@exportExcelCountry')->name('report.excel.country');
 Route::post('system-management/report/pdf', 'ReportController@exportPDF')->name('report.pdf');
+Route::post('system-management/report/pdf/department', 'ReportController@exportPDFDepartment')->name('report.pdf.department');
+Route::post('system-management/report/pdf/country', 'ReportController@exportPDFCountry')->name('report.pdf.country');
 
 Route::get('avatars/{name}', 'EmployeeManagementController@load');

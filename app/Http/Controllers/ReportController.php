@@ -30,7 +30,9 @@ class ReportController extends Controller
         $to = date($format, strtotime("+30 days"));
         $constraints = [
             'from' => $now,
-            'to' => $to
+            'to' => $to,
+            "country_id" => "0",
+            "department_id" => "0"
         ];
         $countries = Country::all();
         $departments = Department::all();
@@ -45,6 +47,16 @@ class ReportController extends Controller
         redirect()->intended('system-management/report');
     }
 
+    public function exportExcelDepartment(Request $request) {
+        $this->prepareExportingDataDepartment($request)->export('xlsx');
+        redirect()->intended('system-management/report');
+    }
+
+    public function exportExcelCountry(Request $request) {
+        $this->prepareExportingDataCountry($request)->export('xlsx');
+        redirect()->intended('system-management/report');
+    }
+
     public function exportPDF(Request $request) {
          $constraints = [
             'from' => $request['from'],
@@ -55,10 +67,75 @@ class ReportController extends Controller
         return $pdf->download('report_from_'. $request['from'].'_to_'.$request['to'].'pdf');
         // return view('system-mgmt/report/pdf', ['employees' => $employees, 'searchingVals' => $constraints]);
     }
-    
+    public function exportPDFCountry(Request $request) {
+         $constraints = [
+            'from' => $request['from'],
+            'to' => $request['to'],
+            "country_id" => $request['country_id']
+        ];
+        $employees = $this->getExportingDataCountry($constraints);
+        $pdf = PDF::loadView('system-mgmt/report/pdf', ['employees' => $employees, 'searchingVals' => $constraints]);
+        return $pdf->download('report_from_'. $request['from'].'_to_'.$request['to'].'pdf');
+        // return view('system-mgmt/report/pdf', ['employees' => $employees, 'searchingVals' => $constraints]);
+    }
+
+     public function exportPDFDepartment(Request $request) {
+         $constraints = [
+            'from' => $request['from'],
+            'to' => $request['to'],
+            "department_id" => $request['department_id']
+        ];
+        $employees = $this->getExportingDataDepartment($constraints);
+        $pdf = PDF::loadView('system-mgmt/report/pdf', ['employees' => $employees, 'searchingVals' => $constraints]);
+        return $pdf->download('report_from_'. $request['from'].'_to_'.$request['to'].'pdf');
+        // return view('system-mgmt/report/pdf', ['employees' => $employees, 'searchingVals' => $constraints]);
+    }
     private function prepareExportingData($request) {
         $author = Auth::user()->username;
         $employees = $this->getExportingData(['from'=> $request['from'], 'to' => $request['to']]);
+        return Excel::create('report_from_'. $request['from'].'_to_'.$request['to'], function($excel) use($employees, $request, $author) {
+
+        // Set the title
+        $excel->setTitle('List of hired employees from '. $request['from'].' to '. $request['to']);
+
+        // Chain the setters
+        $excel->setCreator($author)
+            ->setCompany('Employees');
+
+        // Call them separately
+        $excel->setDescription('The list of hired employees');
+
+        $excel->sheet('Hired_Employees', function($sheet) use($employees) {
+
+        $sheet->fromArray($employees);
+            });
+        });
+    }
+
+     private function prepareExportingDataDepartment($request) {
+        $author = Auth::user()->username;
+        $employees = $this->getExportingDataDepartment(['from'=> $request['from'], 'to' => $request['to'],"department_id" => $request['department_id']] );
+        return Excel::create('report_from_'. $request['from'].'_to_'.$request['to'], function($excel) use($employees, $request, $author) {
+
+        // Set the title
+        $excel->setTitle('List of hired employees from '. $request['from'].' to '. $request['to']);
+
+        // Chain the setters
+        $excel->setCreator($author)
+            ->setCompany('Employees');
+
+        // Call them separately
+        $excel->setDescription('The list of hired employees');
+
+        $excel->sheet('Hired_Employees', function($sheet) use($employees) {
+
+        $sheet->fromArray($employees);
+            });
+        });
+    }
+     private function prepareExportingDataCountry($request) {
+        $author = Auth::user()->username;
+        $employees = $this->getExportingDataCountry(['from'=> $request['from'], 'to' => $request['to'],'country_id' => $request['country_id']]);
         return Excel::create('report_from_'. $request['from'].'_to_'.$request['to'], function($excel) use($employees, $request, $author) {
 
         // Set the title
@@ -96,7 +173,8 @@ class ReportController extends Controller
         $constraints = [
             'from' => $request['from'],
             'to' => $request['to'],
-            "country_id" => $request['country_id']
+            "country_id" => $request['country_id'],
+            "department_id" => "0"
         ];
 
         $countries = Country::all();
@@ -114,7 +192,8 @@ class ReportController extends Controller
         $constraints = [
             'from' => $request['from'],
             'to' => $request['to'],
-            "department_id" => $request['department_id']
+            "department_id" => $request['department_id'],
+            "country_id" => "0"
         ];
 
         $countries = Country::all();
@@ -138,18 +217,16 @@ class ReportController extends Controller
     }
 
     private function getExportingData($constraints) {
-        $department_id = "";
-        try{
-            $department_id = $constraints['department_id'];
-        }catch(Exception $ex){
-            $department_id = "";
-        }
+        $department_id = "*";
 
-        $country_id = "";
-        try{
+        if(isset($constraints['department_id'])){
+            $department_id = $constraints['department_id'];
+        }
+    
+
+        $country_id = "*";
+        if(isset($constraints['country_id'])){
             $country_id = $constraints['country_id'];
-        }catch(Exception $ex){
-            $country_id = "";
         }
 
         return DB::table('employees')
@@ -161,11 +238,67 @@ class ReportController extends Controller
         ->select('employees.firstname', 'employees.middlename', 'employees.lastname', 
         'employees.age','employees.birthdate', 'employees.address', 'employees.zip',
         'employees.nhif', 'employees.nssf','employees.salary','employees.date_hired',
-        'department.name as department_name', 'division.name as division_name')
+        'department.name as department_name')//, 'division.name as division_name'
         ->where('date_hired', '>=', $constraints['from'])
         ->where('date_hired', '<=', $constraints['to'])
-        ->where('department_id', $department_id)
-        ->where('country_id', $country_id)
+        // ->where('department_id','like','%'.$department_id.'%')
+        // ->where('country_id', 'like','%'.$country_id.'%')
+        ->get()
+        ->map(function ($item, $key) {
+        return (array) $item;
+        })
+        ->all();
+    }
+
+    private function getExportingDataDepartment($constraints) {
+        $department_id = "*";
+
+        if(isset($constraints['department_id'])){
+            $department_id = $constraints['department_id'];
+        }
+
+        return DB::table('employees')
+        // ->leftJoin('city', 'employees.city_id', '=', 'city.id')
+        ->leftJoin('department', 'employees.department_id', '=', 'department.id')
+        // ->leftJoin('state', 'employees.state_id', '=', 'state.id')
+        ->leftJoin('country', 'employees.country_id', '=', 'country.id')
+        ->leftJoin('division', 'employees.division_id', '=', 'division.id')
+        ->select('employees.firstname', 'employees.middlename', 'employees.lastname', 
+        'employees.age','employees.birthdate', 'employees.address', 'employees.zip',
+        'employees.nhif', 'employees.nssf','employees.salary','employees.date_hired',
+        'department.name as department_name')//, 'division.name as division_name'
+        // ->where('date_hired', '>=', $constraints['from'])
+        // ->where('date_hired', '<=', $constraints['to'])
+        ->where('department_id',$constraints['department_id'])
+        // ->where('country_id', 'like','%'.$country_id.'%')
+        ->get()
+        ->map(function ($item, $key) {
+        return (array) $item;
+        })
+        ->all();
+    }
+
+    private function getExportingDataCountry($constraints) {
+
+        $country_id = "*";
+        if(isset($constraints['country_id'])){
+            $country_id = $constraints['country_id'];
+        }
+
+        return DB::table('employees')
+        // ->leftJoin('city', 'employees.city_id', '=', 'city.id')
+        ->leftJoin('department', 'employees.department_id', '=', 'department.id')
+        // ->leftJoin('state', 'employees.state_id', '=', 'state.id')
+        ->leftJoin('country', 'employees.country_id', '=', 'country.id')
+        ->leftJoin('division', 'employees.division_id', '=', 'division.id')
+        ->select('employees.firstname', 'employees.middlename', 'employees.lastname', 
+        'employees.age','employees.birthdate', 'employees.address', 'employees.zip',
+        'employees.nhif', 'employees.nssf','employees.salary','employees.date_hired',
+        'department.name as department_name')//, 'division.name as division_name'
+        ->where('date_hired', '>=', $constraints['from'])
+        ->where('date_hired', '<=', $constraints['to'])
+        // ->where('department_id','like','%'.$department_id.'%')
+        ->where('country_id', 'like','%'.$country_id.'%')
         ->get()
         ->map(function ($item, $key) {
         return (array) $item;

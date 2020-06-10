@@ -13,6 +13,8 @@
                 {{ csrf_field() }}
                 <input type="hidden" value="{{$searchingVals['from']}}" name="from" />
                 <input type="hidden" value="{{$searchingVals['to']}}" name="to" />
+                {{-- <input type="hidden" value="{{$searchingVals['department_id']}}" name="department_id" />
+                <input type="hidden" value="{{$searchingVals['country_id']}}" name="country_id" /> --}}
                 <button type="submit" class="btn btn-primary">
                   Export to Excel
                 </button>
@@ -23,6 +25,8 @@
                 {{ csrf_field() }}
                 <input type="hidden" value="{{$searchingVals['from']}}" name="from" />
                 <input type="hidden" value="{{$searchingVals['to']}}" name="to" />
+                {{-- <input type="hidden" value="{{$searchingVals['department_id']}}" name="department_id" />
+                <input type="hidden" value="{{$searchingVals['country_id']}}" name="country_id" /> --}}
                 <button type="submit" class="btn btn-info">
                   Export to PDF
                 </button>
@@ -70,6 +74,31 @@
          </div>
         <br>
       </form>
+      <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+              <form class="form-horizontal" role="form" method="POST" action="{{ route('report.excel.department') }}">
+                  {{ csrf_field() }}
+                  <input type="hidden" value="{{$searchingVals['from']}}" name="from" />
+                  <input type="hidden" value="{{$searchingVals['to']}}" name="to" />
+                  <input type="hidden" value="{{$searchingVals['department_id']}}" name="department_id"/>
+            
+                  <button type="submit" class="btn btn-primary">Export to Excel</button>
+              </form>
+          </div>
+          <div class="col-sm-4">
+              <form class="form-horizontal" role="form" method="POST" action="{{ route('report.pdf.department') }}">
+                  {{ csrf_field() }}
+                  <input type="hidden" value="{{$searchingVals['from']}}" name="from" />
+                  <input type="hidden" value="{{$searchingVals['to']}}" name="to" />
+                  {{-- <input type="hidden" value="{{$searchingVals['department_id']}}" name="department_id" />
+                  <input type="hidden" value="{{$searchingVals['country_id']}}" name="country_id" /> --}}
+                  <button type="submit" class="btn btn-info">
+                    Export to PDF
+                  </button>
+              </form>
+          </div>
+      </div>
        <form method="POST" action="{{ route('report.search.country') }}">
         {{ csrf_field() }}
         <h3>Search by Country</h3>
@@ -96,6 +125,35 @@
          </div>
         <br>
       </form>
+      <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+              <form class="form-horizontal" role="form" method="POST" action="{{ route('report.excel.country') }}">
+                  {{ csrf_field() }}
+                  <input type="hidden" value="{{$searchingVals['from']}}" name="from" />
+                  <input type="hidden" value="{{$searchingVals['to']}}" name="to" />
+                  <input type="hidden" value="{{$searchingVals['country_id']}}" name="country_id" />
+                  {{-- <input type="hidden" value="{{$searchingVals['department_id']}}" name="department_id" />
+                  <input type="hidden" value="{{$searchingVals['country_id']}}" name="country_id" /> --}}
+                  <button type="submit" class="btn btn-primary">
+                    Export to Excel
+                  </button>
+              </form>
+          </div>
+          <div class="col-sm-4">
+              <form class="form-horizontal" role="form" method="POST" action="{{ route('report.pdf.country') }}">
+                  {{ csrf_field() }}
+                  <input type="hidden" value="{{$searchingVals['from']}}" name="from" />
+                  <input type="hidden" value="{{$searchingVals['to']}}" name="to" />
+                  <input type="hidden" value="{{$searchingVals['country_id']}}" name="country_id" />
+                  {{-- <input type="hidden" value="{{$searchingVals['department_id']}}" name="department_id" />
+                  <input type="hidden" value="{{$searchingVals['country_id']}}" name="country_id" /> --}}
+                  <button type="submit" class="btn btn-info">
+                    Export to PDF
+                  </button>
+              </form>
+          </div>
+      </div>
     <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
       <div class="row">
         <div class="col-sm-12">
